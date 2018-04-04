@@ -1,6 +1,7 @@
 package ttl.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ttl.domain.Student;
@@ -10,10 +11,19 @@ public class StudentService {
 
 	private List<Student> students = new ArrayList<>();
 	
+	
+	public List<Student> getAllStudents() {
+		return students;
+	}
+	
+	
 	private static int nextId = 0;
 	
 	public StudentService() {
 		Student s = new StudentBuilder().id(1).name("Joe").status(Student.Status.FULL_TIME).build();
+		insertStudent(s);
+
+		s = new StudentBuilder().id(1).name("Joe").status(Student.Status.SLEEPING).build();
 		insertStudent(s);
 
 		s = new StudentBuilder().id(1).name("Seema").status(Student.Status.FULL_TIME).build();
@@ -43,9 +53,5 @@ public class StudentService {
 		return null;
 	}
 	
-	
-	public List<Student> getAllStudents() {
-		return students;
-	}
 	
 }

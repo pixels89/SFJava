@@ -1,6 +1,6 @@
 package ttl.domain;
 
-public class Student {
+public class Student implements Comparable<Student>{
 	
 	private int id;
 	private String name;
@@ -20,7 +20,26 @@ public class Student {
 	public Student() {}
 	
 	public enum Status { 
-		FULL_TIME, PART_TIME, SLEEPING 
+		FULL_TIME(10), 
+		PART_TIME(12), 
+		SLEEPING(1234);
+		
+		private int code;
+		Status(int code) {
+			this.code = code;
+		}
+		
+		public String toString() {
+			return name().substring(0, 1) + name().substring(1).toLowerCase();
+		}
+		
+		public static Status fromPrettyString(String ps) {
+			return Status.valueOf(ps.toUpperCase());
+		}
+		
+		public int getCode() {
+			return code;
+		}
 	};
 	
 	public int getId() {
@@ -46,7 +65,7 @@ public class Student {
 	}
 	@Override
 	public String toString() {
-		return "Student [id=" + id + ", name=" + name + "]";
+		return "Student [id=" + id + ", name=" + name + " status " + status + "]";
 	}
 	@Override
 	public int hashCode() {
@@ -105,6 +124,12 @@ public class Student {
 			
 			return s;
 		}
+	}
+
+
+	@Override
+	public int compareTo(Student other) {
+		return id - other.id;
 	}
 	
 
