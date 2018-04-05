@@ -1,11 +1,10 @@
 package ttl.app;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import ttl.domain.Student;
-import ttl.domain.Student.Status;
 import ttl.service.StudentService;
 
 public class RegApp {
@@ -19,68 +18,33 @@ public class RegApp {
 		StudentService service = new StudentService();
 
 		List<Student> students = service.getAllStudents();
-
-		Collections.sort(students);
-
-		for (Student s : students) {
-			System.out.println(s);
-		}
-
-		NameComparator nc = new NameComparator();
-		Collections.sort(students, nc);
-
-		Collections.sort(students, new Comparator<Student>() {
-			@Override
-			public int compare(Student o1, Student o2) {
-				 return o1.getName().compareTo(o2.getName());
-			};
+		
+		List<String> names = getFields(students, new Function<Student, String>() {
+			public String apply(Student s) {
+				return s.getName();
+			}
 		});
 
-		Collections.sort(students, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+		names = getFields(students, s -> s.getName());
+		
+		names.forEach(System.out::println);
 
-		students.forEach((s) -> System.out.println(s));
-
-		students.forEach(System.out::println);
-		students.forEach(RegApp::myHandler);
-
-		System.out.println();
-		for (Student s : students) {
-			System.out.println(s);
-		}
-
+		List<Integer> ids = getFields(students, s -> s.getId());
+		
+		ids.forEach(System.out::println);
 	}
-
 	
-	public static void myHandler(Student s) {
-		//Send down socket
+	
+	public interface Extractor<T, R> {
+		public R extract(T s );
 	}
-
-	class NameComparator implements Comparator<Student> {
-
-		@Override
-		public int compare(Student o1, Student o2) {
-			int r = o1.getName().compareTo(o2.getName());
-			if (r == 0) {
-				r = o1.getId() - o2.getId();
-			}
-			return r;
+	
+	
+	public <T, R> List<R> getFields(List<T> input, Function<T, R> e) {
+		List<R> result = new ArrayList<>();
+		for(T s : input) {
+			result.add(e.apply(s));
 		}
-	}
-
-	public static void mainEnum(String[] args) {
-
-		StudentService service = new StudentService();
-
-		String name = "Joe";
-		String strStatus = "Part_time";
-
-		Student s = new Student(name, Status.fromPrettyString(strStatus));
-
-		System.out.println(s);
-
-		Status[] statuses = Status.values();
-		for (Status st : statuses) {
-			System.out.println("code is " + st.getCode());
-		}
+		return result;
 	}
 }
