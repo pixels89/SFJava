@@ -36,7 +36,15 @@ public class RegAppSort {
 			};
 		});
 
-		Collections.sort(students, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+		Comparator<Student> comp1 = (o1, o2) -> o1.getName().compareTo(o2.getName());
+		
+		
+		Comparator<Student> nameComp = Comparator.comparing(Student::getName);
+		Comparator<Student> idComp = Comparator.comparing(Student::getId);
+		
+		
+		
+		Collections.sort(students, nameComp.thenComparing(idComp));
 
 		students.forEach((s) -> System.out.println(s));
 

@@ -2,7 +2,8 @@ package ttl.app;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ttl.domain.Student;
 import ttl.service.StudentService;
@@ -19,32 +20,35 @@ public class RegApp {
 
 		List<Student> students = service.getAllStudents();
 		
-		List<String> names = getFields(students, new Function<Student, String>() {
-			public String apply(Student s) {
-				return s.getName();
-			}
-		});
-
-		names = getFields(students, s -> s.getName());
-		
-		names.forEach(System.out::println);
-
-		List<Integer> ids = getFields(students, s -> s.getId());
-		
-		ids.forEach(System.out::println);
-	}
-	
-	
-	public interface Extractor<T, R> {
-		public R extract(T s );
-	}
-	
-	
-	public <T, R> List<R> getFields(List<T> input, Function<T, R> e) {
-		List<R> result = new ArrayList<>();
-		for(T s : input) {
-			result.add(e.apply(s));
+		for(Student s : students) {
+			
 		}
-		return result;
+		
+		Map<String, Student> map = students.stream()
+				.parallel()
+			//.filter((s) -> s.getName().startsWith("M"))
+			.collect(Collectors.toMap(s -> s.getName(), s -> s, (s1, s2) -> {
+				System.out.println("in binop" +s1);	
+				return s1;
+			}));
+		
+		List<Student> list = students.stream().parallel()
+			//.filter((s) -> s.getName().startsWith("M"))
+			.collect(() -> new ArrayList<Student>(), 
+					(l, obj) -> {
+						l.add(obj);
+					}, (list1, list2) -> {
+						list1.addAll(list2);
+					});
+
+		List<Student> list2 = students.stream().parallel()
+			//.filter((s) -> s.getName().startsWith("M"))
+			.collect(ArrayList::new,
+					ArrayList::add,
+					ArrayList::addAll);
+		
+		list.forEach(System.out::println);
 	}
+	
+	
 }
