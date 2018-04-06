@@ -47,18 +47,16 @@ public class RaceCondition extends Thread {
 		// Spin in a loop and update the counter
 		for (int i = 0; i < repeat; i++) {
 
-			synchronized (repository) {
-				// Add the value you see to your own list of numbers
-				int val = repository.getData();
-				numbers.add(val);
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException ie) {
-					ie.printStackTrace();
-				}
-				// And increment the value
-				repository.setData(val + 1);
+			// Add the value you see to your own list of numbers
+			int val = repository.getData();
+			numbers.add(val);
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException ie) {
+				ie.printStackTrace();
 			}
+			// And increment the value
+			repository.setData(val + 1);
 		}
 	}
 
